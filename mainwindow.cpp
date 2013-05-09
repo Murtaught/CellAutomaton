@@ -1,9 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
+CellAutomaton::CellAutomaton(QWidget *parent) :
+    QWidget(parent),
     colors(DEFAULT_COLORS_AMOUNT),
     scaling_factor(DEFAULT_SCALING_FACTOR),
     tick_timer(new QTimer(this)),
@@ -11,8 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     gen_ptr(&random_colors),
     dead_cells(0)
 {
-    // This needs to be done first
-    ui->setupUi(this);
     qsrand( QTime::currentTime().msec() );
 
     // Connecting components
@@ -23,18 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
     restart_timer->start(0);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::resizeEvent(QResizeEvent*)
+void CellAutomaton::resizeEvent(QResizeEvent*)
 {
     tick_timer->stop();
     restart_timer->start(200);
 }
 
-void MainWindow::start()
+void CellAutomaton::start()
 {
     tick_timer->stop();
 
@@ -58,7 +50,7 @@ void MainWindow::start()
     randomize_map();
 }
 
-void MainWindow::randomize_map()
+void CellAutomaton::randomize_map()
 {
     // Reset timer(s)
     steps = 0;
@@ -74,13 +66,13 @@ void MainWindow::randomize_map()
             map[y][x] = qrand() % colors.size();
 }
 
-void MainWindow::change_random_pixels(int amount)
+void CellAutomaton::change_random_pixels(int amount)
 {
     for (int i = 0; i < amount; ++i)
         map[qrand() % map.size()][qrand() % map[0].size()] = qrand() % colors.size();
 }
 
-void MainWindow::paintEvent(QPaintEvent *)
+void CellAutomaton::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
 
@@ -116,7 +108,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     }
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
+void CellAutomaton::keyPressEvent(QKeyEvent *event)
 {
     std::cout << "Key pressed (" << event->key() << ", " << char(event->key()) << ")." << std::endl;
 
@@ -167,7 +159,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
-int MainWindow::pixel_next(int y, int x)
+int CellAutomaton::pixel_next(int y, int x)
 {
     static int sides[8];
 
@@ -193,7 +185,7 @@ int MainWindow::pixel_next(int y, int x)
     return cur;
 }
 
-void MainWindow::advance()
+void CellAutomaton::advance()
 {
     ++steps;
 
@@ -278,7 +270,7 @@ void MainWindow::advance()
     }
 }
 
-int MainWindow::map_get(int y, int x)
+int CellAutomaton::map_get(int y, int x)
 {
     if (y < 0) y = map.size() - 1;
     if (x < 0) x = map[0].size() - 1;

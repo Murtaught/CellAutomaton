@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include <QWidget>
 
 #include <vector>
 
@@ -18,17 +18,12 @@
 #include <cmath>
 #include <iostream>
 
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
+class CellAutomaton : public QWidget
 {
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit CellAutomaton(QWidget *parent = 0);
 
 public slots:
     void start();
@@ -37,8 +32,6 @@ public slots:
     void change_random_pixels(int amount);
     
 private:
-    Ui::MainWindow *ui;
-
     void resizeEvent(QResizeEvent*);
     void paintEvent(QPaintEvent*);
     void keyPressEvent(QKeyEvent* event);
