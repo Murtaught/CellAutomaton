@@ -11,10 +11,5 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = CellAutomaton
 TEMPLATE = app
 
-
-SOURCES += main.cpp\
-        mainwindow.cpp
-
-HEADERS  += mainwindow.h
-
-FORMS    +=
+SOURCES += main.cpp cell_automaton.cpp
+HEADERS  += cell_automaton.h

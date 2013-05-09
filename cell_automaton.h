@@ -21,45 +21,39 @@
 class CellAutomaton : public QWidget
 {
     Q_OBJECT
-    
+    static const int DEFAULT_COLORS_AMOUNT = 21;
+    static const int DEFAULT_SCALING_FACTOR = 3;
+    static const int TICK_LENGTH_MS = 25;
+    static const int RESTART_TIME   = 800;
+    static const int LIFE_LENGTH_MS = 30 * 60 * 1000; // 3 minutes
+
 public:
     explicit CellAutomaton(QWidget *parent = 0);
 
 public slots:
     void start();
     void advance();
-    void randomize_map();
-    void change_random_pixels(int amount);
     
 private:
     void resizeEvent(QResizeEvent*);
     void paintEvent(QPaintEvent*);
     void keyPressEvent(QKeyEvent* event);
-
-    static const int DEFAULT_COLORS_AMOUNT = 21;
-    std::vector<QColor> colors;
-
-    static const int DEFAULT_SCALING_FACTOR = 3;
-    int scaling_factor;
+    void randomize_map();
+    void change_random_pixels(int amount);
 
     typedef std::vector<std::vector<int> > map_type;
-    map_type map, buf;
 
     inline int pixel_next(int y, int x);
     inline int map_get(int y, int x);
     inline int& get(map_type const& map, int y, int x);
 
-    static const int TICK_LENGTH_MS = 25;
-    static const int RESTART_TIME   = 800;
-
+    std::vector<QColor> colors;
+    int scaling_factor;
+    map_type map, buf;
     QTimer* tick_timer;
     QTimer* restart_timer;
-
-    static const int LIFE_LENGTH_MS = 30 * 60 * 1000; // 3 minutes
     QElapsedTimer life_timer;
-
     void (*gen_ptr)(std::vector<QColor>&);
-
     qint64 steps;
     qint64 dead_cells;
 };

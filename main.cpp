@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "cell_automaton.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])

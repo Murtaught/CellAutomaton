@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "cell_automaton.h"
 #include "ui_mainwindow.h"
 
 CellAutomaton::CellAutomaton(QWidget *parent) :
