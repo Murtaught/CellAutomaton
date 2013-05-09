@@ -1,0 +1,13 @@
+This is actually a QWidget that shows your user some pretty colorful animation.
+You can easily put this inside your own QWidgets, QMainWindows, etc.
+
+Automaton step rule:
+Cell colors are sorted and enumerated. Cell can change its color only
+to succeeding color (with respect to its current color). And it changes
+only if at least one of its eight neighbor cell have this succeding color.
+
+This thing also have a few keyboard control keys:
+    +, -     -- change (increase or decrease) scaling factor
+    ], [     -- change color amount
+    spacebar -- change color scheme.
+    R        -- restart automaton.

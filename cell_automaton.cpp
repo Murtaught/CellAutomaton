@@ -13,7 +13,7 @@ CellAutomaton::CellAutomaton(QWidget *parent) :
     qsrand( QTime::currentTime().msec() );
 
     // Connecting components
-    connect(restart_timer, SIGNAL(timeout()), this, SLOT(start()));
+    connect(restart_timer, SIGNAL(timeout()), this, SLOT(restart()));
     connect(tick_timer, SIGNAL(timeout()), this, SLOT(advance()));
 
     restart_timer->setSingleShot(true);
@@ -22,40 +22,29 @@ CellAutomaton::CellAutomaton(QWidget *parent) :
 
 void CellAutomaton::resizeEvent(QResizeEvent*)
 {
-    tick_timer->stop();
-    restart_timer->start(200);
+    restart(map.size(), map.size() ? map[0].size() : 0);
 }
 
-void CellAutomaton::start()
+void CellAutomaton::restart(int old_y, int old_x)
 {
-    tick_timer->stop();
+    std::cout << old_x << " " << old_y << std::endl;
+
+    // Reset timer(s)
+    steps = 0;
+    life_timer.start();
+    tick_timer->start(TICK_LENGTH_MS);
 
     std::cout << "(Re)Starting!\n";
     std::cout << "    Resolution:     " << width() << "x" << height() << " px.\n";
     std::cout << "    Scaling factor: " << scaling_factor << "x\n";
     std::cout << "    Colors:         " << colors.size() << std::endl;
 
-    // Prepare map
+    // Allocate map
     int map_height = height() / scaling_factor + 1;
     int map_width  = width()  / scaling_factor + 1;
     map.resize(map_height);
-    buf.resize(map_height);
     for (int i = 0; i < map_height; ++i)
-    {
         map[i].resize(map_width);
-        buf[i].resize(map_width);
-    }
-
-    // Light the fuses!
-    randomize_map();
-}
-
-void CellAutomaton::randomize_map()
-{
-    // Reset timer(s)
-    steps = 0;
-    life_timer.start();
-    tick_timer->start(TICK_LENGTH_MS);
 
     // Prepare colors
     gen_ptr(colors);
@@ -63,7 +52,9 @@ void CellAutomaton::randomize_map()
     // Generates random color field
     for (int y = 0; y < int(map.size()); ++y)
         for (int x = 0; x < int(map[0].size()); ++x)
-            map[y][x] = qrand() % colors.size();
+            if (x >= old_x || y >= old_y)
+                map[y][x] = qrand() % colors.size();
+    buf = map;
 }
 
 void CellAutomaton::change_random_pixels(int amount)
@@ -115,27 +106,27 @@ void CellAutomaton::keyPressEvent(QKeyEvent *event)
     switch ( event->key() ) {
     case '+':
         ++scaling_factor;
-        start();
+        restart();
         break;
 
     case '-':
         if (scaling_factor > 1)
         {
             --scaling_factor;
-            start();
+            restart();
         }
         break;
 
     case ']':
         colors.resize(colors.size() + 1);
-        start();
+        restart();
         break;
 
     case '[':
         if ( colors.size() > 1 )
         {
             colors.resize(colors.size() - 1);
-            start();
+            restart();
         }
         break;
 
@@ -145,12 +136,12 @@ void CellAutomaton::keyPressEvent(QKeyEvent *event)
             gen_ptr = &melting_ice;
         else
             gen_ptr = &random_colors;
-        start();
+        restart();
         break;
 
     case 'R':
         // just restart
-        start();
+        restart();
         break;
 
 
@@ -254,8 +245,8 @@ void CellAutomaton::advance()
         double fps = steps * 1000.0 / life_timer.elapsed();
         setWindowTitle(QString::number(fps, 'f', 2) + " FPS");
 
-        if ( life_timer.elapsed() > LIFE_LENGTH_MS )
-            start();
+        //if ( life_timer.elapsed() > LIFE_LENGTH_MS )
+        //    restart();
 
         update();
     }

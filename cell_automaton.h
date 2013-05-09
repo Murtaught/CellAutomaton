@@ -25,20 +25,19 @@ class CellAutomaton : public QWidget
     static const int DEFAULT_SCALING_FACTOR = 3;
     static const int TICK_LENGTH_MS = 25;
     static const int RESTART_TIME   = 800;
-    static const int LIFE_LENGTH_MS = 30 * 60 * 1000; // 3 minutes
+    //static const int LIFE_LENGTH_MS = 10 * 60 * 1000; // 10 minutes
 
 public:
     explicit CellAutomaton(QWidget *parent = 0);
 
 public slots:
-    void start();
+    void restart(int old_y = 0, int old_x = 0);
     void advance();
     
 private:
     void resizeEvent(QResizeEvent*);
     void paintEvent(QPaintEvent*);
     void keyPressEvent(QKeyEvent* event);
-    void randomize_map();
     void change_random_pixels(int amount);
 
     typedef std::vector<std::vector<int> > map_type;
